@@ -1,4 +1,7 @@
-public class Die
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Die implements ActionListener
 {
     private int sides;
 
@@ -20,5 +23,10 @@ public class Die
     {
         int num = (int)(Math.random()*sides) + 1;
         return num;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
     }
 }
