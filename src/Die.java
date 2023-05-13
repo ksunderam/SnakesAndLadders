@@ -1,7 +1,6 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+// Kayan Sunderam
 
-public class Die implements ActionListener
+public class Die
 {
     private int sides;
 
@@ -23,10 +22,5 @@ public class Die implements ActionListener
     {
         int num = (int)(Math.random()*sides) + 1;
         return num;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
     }
 }

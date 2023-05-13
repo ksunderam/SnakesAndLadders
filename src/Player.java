@@ -1,34 +1,30 @@
+// Kayan Sunderam
+
 import java.awt.*;
 
 public class Player
 {
-    //private int numPlayers;
     private int boardPosition;
     private int number;
     private Color color;
     private int xOffset;
     private int yOffset;
+    private int lastRoll;
+    private int isMovement;
 
     public Player(int num, Color col, int x, int y)
     {
         number = num;
-        boardPosition = 0;
+        // Everyone starts at position 1 on the board--the starting spot
+        boardPosition = 1;
         color = col;
+        // Helps draw the player's piece
         xOffset = 25 + x;
         yOffset = 670 + y;
+        //Saves the player's last roll to display on the front end
+        lastRoll = 0;
+        isMovement = 0;
     }
-
-//    public Player(int num, int players)
-//    {
-//        number = num;
-//        boardPosition = 0;
-//        numPlayers = players;
-//    }
-
-//    public int getNumPlayers()
-//    {
-//        return numPlayers;
-//    }
 
     public int getBoardPosition()
     {
@@ -40,15 +36,35 @@ public class Player
         return number;
     }
 
-    public void move(int sides)
+    public Color getColor()
     {
-        Die dice = new Die(sides);
-        boardPosition += dice.roll();
+        return color;
     }
 
+    public int getIsMovement()
+    {
+        return isMovement;
+    }
+
+    public int getLastRoll()
+    {
+        return lastRoll;
+    }
+
+    // Rolls the die with 3, 6, or 8 sides, and updates the player's position accordingly
+    public int move(int sides)
+    {
+        isMovement = 0;
+        Die dice = new Die(sides);
+        lastRoll = dice.roll();
+        boardPosition += lastRoll;
+        return lastRoll;
+    }
+
+    // The player has won if they've reacheed the final spot on the board--54
     public boolean checkWin()
     {
-        if (boardPosition == 54/*0 End Spot on Board*/)
+        if (boardPosition >= 54/* Final Spot on Board*/)
         {
             return true;
         }
@@ -57,63 +73,80 @@ public class Player
 
     public void ladderMove()
     {
-        if (boardPosition == 3/*On a specific point which has a ladder*/)
+        // If the player is at a specific point which has a ladder
+        if (boardPosition == 3)
         {
-            //boardPosition now equals the new position
+            // boardPosition now equals the new position
             boardPosition = 17;
+            // Saves the original boardPosition they landed at before the power up
+            isMovement = 3;
         }
-        if (boardPosition == 10/*On a specific point which has a ladder*/)
+        if (boardPosition == 10)
         {
-            //boardPosition now equals the new position
             boardPosition = 27;
+            isMovement = 10;
         }
-        if (boardPosition == 20/*On a specific point which has a ladder*/)
+        if (boardPosition == 20)
         {
-            //boardPosition now equals the new position
             boardPosition = 39;
+            isMovement = 20;
         }
-        if (boardPosition == 26/*On a specific point which has a ladder*/)
+        if (boardPosition == 26)
         {
-            //boardPosition now equals the new position
             boardPosition = 49;
+            isMovement = 26;
         }
-        //keep repeating these ifs all the way down
     }
 
     public void snakeMove()
     {
-        if (boardPosition == 12/*On a specific point which has a snake*/)
+        // If the player is at a specific point which has a snake
+        if (boardPosition == 12)
         {
             //boardPosition now equals the new position
             boardPosition = 6;
+            // Saves the original boardPosition they landed at before sliding down the snake
+            isMovement = 12;
         }
-        if (boardPosition == 34/*On a specific point which has a snake*/)
+        if (boardPosition == 34)
         {
-            //boardPosition now equals the new position
             boardPosition = 22;
+            isMovement = 34;
         }
-        if (boardPosition == 40/*On a specific point which has a snake*/)
+        if (boardPosition == 40)
         {
-            //boardPosition now equals the new position
             boardPosition = 13;
+            isMovement = 40;
         }
-        if (boardPosition == 46/*On a specific point which has a snake*/)
+        if (boardPosition == 46)
         {
-            //boardPosition now equals the new position
             boardPosition = 28;
+            isMovement = 46;
         }
-        if (boardPosition == 53/*On a specific point which has a snake*/)
+        if (boardPosition == 53)
         {
-            //boardPosition now equals the new position
             boardPosition = 36;
+            isMovement = 53;
         }
-        //keep repeating these ifs all the way down
     }
+
+    // Moves the player, checks for any ladders or snakes at that position and moves them if so,
+    // then checks whether the player has reached the end of the board and is a winner
+    public boolean playTurn(int dieSides)
+    {
+        move(dieSides);
+        ladderMove();
+        snakeMove();
+        return checkWin();
+    }
+
+    // Draws the player's piece on the board (a circle of their color) based on their board position
+    // Ifs just check which row the player is at on the board, and inside we get the column
+    // Based on these factors, x and y are updated, and the player is then drawn
     public void drawPlayer(Graphics g)
     {
         int x = 0;
         int y = 0;
-
         if (boardPosition >= 1 && boardPosition <= 9)
         {
             x = (boardPosition - 1)*128;
@@ -138,45 +171,16 @@ public class Player
             y = 128*4;
             x = (boardPosition - 37)*128;
         }
-        if (boardPosition >= 46 && boardPosition <= 54)
+        if (boardPosition >= 46)
         {
             y = 128*5;
             x = (54 - boardPosition)*128;
         }
-
+        if (boardPosition >= 54)
+        {
+            x = 0;
+        }
         g.setColor(color);
-        g.fillOval(xOffset + x, yOffset + y, 64, 64);
-
-//        if (number == 0)
-//        {
-//            g.setColor(new Color(196, 0, 0));
-//            g.fillOval(25 + x, 670 + y, 64, 64);
-//        }
-//
-//        if (number == 1)
-//        {
-//            g.setColor(new Color(0, 27, 159));
-//            x += 64;
-//            g.fillOval(25 + x, 670 + y, 64, 64);
-//        }
-//
-//        if (number == 2)
-//        {
-//            g.setColor(new Color(6, 101, 0));
-//            y += 64;
-//            g.fillOval(25 + x, 670 + y, 64, 64);
-//        }
-//
-//        if (number == 3)
-//        {
-//            g.setColor(new Color(224, 188, 0));
-//            x += 64;
-//            y += 64;
-//            g.fillOval(25 + x, 670 + y, 64, 64);
-//        }
-
-
-//        g.setColor(Color.BLACK);
-//        g.fillOval(27, 740, 50, 50);
+        g.fillOval(xOffset + x, yOffset - y, 64, 64);
     }
 }
